@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление Лекциями</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="image-container">
+    <img src="https://upload.wikimedia.org/wikipedia/ru/0/08/%D0%94%D0%92%D0%A4%D0%A3_%D0%BB%D0%BE%D0%B3%D0%BE.jpg" width="170" height="110">
+</div>
+
+<div class="menu-container">
+    <a href="#" class="menu-item">Главная</a>
+    <a href="#" class="menu-item">Лекции</a>
+    <a href="#" class="menu-item">Практические задания</a>
+    <a href="#" class="menu-item">Тесты</a>
+    <a href="#" class="menu-item">Контрольные задания</a>
+</div>
+
+<div class="lecture-container">
+    <h2>Лекции</h2>
+    <p>Выберите лекцию из списка ниже:</p>
+    <!-- Список лекций -->
+    <ul class="lecture-list"></ul>
+    
+    <!-- Расширенная форма для добавления новой лекции -->
+    <form id="addLectureForm">
+        <input type="text" id="newLectureTitle" placeholder="Название лекции">
+        <textarea id="newLectureContent" placeholder="Материал лекции"></textarea>
+        <button type="submit">Добавить лекцию</button>
+    </form>
+    
+    <!-- Форма для редактирования существующей лекции -->
+    <form id="editLectureForm" style="display:none;">
+        <input type="hidden" id="lectureIdToEdit">
+        <input type="text" id="editedLectureTitle" placeholder="Измененное название лекции">
+        <textarea id="editedLectureContent" placeholder="Измененный материал лекции"></textarea>
+        <button type="submit">Сохранить изменения</button>
+    </form>
+    
+    <!-- Форма для удаления лекции -->
+    <form id="deleteLectureForm" style="display:none;">
+        <input type="hidden" id="lectureIdToDelete">
+        <button type="submit">Удалить лекцию</button>
+    </form>
+</div>
+
+<script>
+let lectures = [
+    {id: 1, title: "Тема 1", content: "Здесь будет содержимое лекции."},
+    {id: 2, title: "Тема 2", content: "Здесь будет содержимое лекции."},
+    {id: 3, title: "Тема 3", content: "Здесь будет содержимое лекции."},
+    {id: 4, title: "Тема 4", content: "Здесь будет содержимое лекции."},
+    {id: 5, title: "Тема 5", content: "Здесь будет содержимое лекции."},
+    {id: 6, title: "Тема 6", content: "Здесь будет содержимое лекции."}
+];
+
+function renderLectures() {
+    const lectureList = document.querySelector('.lecture-list');
+    lectureList.innerHTML = ''; // Очистка списка
+    lectures.forEach(lecture => {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = lecture.title;
+        li.appendChild(link);
+        li.addEventListener('click', () => selectLecture(lecture.id));
+        lectureList.appendChild(li);
+    });
+}
+
+function selectLecture(id) {
+    const editForm = document.getElementById('editLectureForm');
+    const deleteForm = document.getElementById('deleteLectureForm');
+    const lectureIdToEdit = document.getElementById('lectureIdToEdit');
+    const lectureIdToDelete = document.getElementById('lectureIdToDelete');
+
+    lectures.forEach(lecture => {
+        if (lecture.id === id) {
+            editForm.style.display = 'block';
+            deleteForm.style.display = 'block';
+            lectureIdToEdit.value = id;
+            lectureIdToDelete.value = id;
+            return;
+        }
+    });
+
+    editForm.querySelector('#editedLectureTitle').value = lectures.find(l => l.id === id).title;
+    editForm.querySelector('#editedLectureContent').value = lectures.find(l => l.id === id).content;
+}
+
+document.getElementById('addLectureForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const newLectureTitle = document.getElementById('newLectureTitle').value.trim();
+    const newLectureContent = document.getElementById('newLectureContent').value.trim();
+    if (newLectureTitle && newLectureContent) {
+        lectures.push({id: Date.now(), title: newLectureTitle, content: newLectureContent});
+        renderLectures();
+        document.getElementById('newLectureTitle').value = '';
+        document.getElementById('newLectureContent').value = '';
+    }
+});
+
+document.getElementById('editLectureForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const editedLectureTitle = document.getElementById('editedLectureTitle').value.trim();
+    const editedLectureContent = document.getElementById('editedLectureContent').value.trim();
+    const lectureIdToEdit = document.getElementById('lectureIdToEdit').value;
+    lectures = lectures.map(lecture => lecture.id === Number(lectureIdToEdit)? {...lecture, title: editedLectureTitle, content: editedLectureContent} : lecture);
+    renderLectures();
+    document.getElementById('editLectureForm').style.display = 'none';
+    document.getElementById('deleteLectureForm').style.display = 'none';
+});
+
+document.getElementById('deleteLectureForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const lectureIdToDelete = document.getElementById('lectureIdToDelete').value;
+    lectures = lectures.filter(lecture => lecture.id!== Number(lectureIdToDelete));
+    renderLectures();
+    document.getElementById('editLectureForm').style.display = 'none';
+    document.getElementById('deleteLectureForm').style.display = 'none';
+});
+
+renderLectures();
+</script>
+
+</body>
+</html>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #e9ebee; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px; 
+}
+
+.menu-container {
+    background-color: #483D8B;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    text-align: center;
+    padding: 10px 0; 
+}
+
+.menu-item {
+    display: inline-block; 
+    background-color: FFB6C1;
+    color: white; 
+    padding: 10px 20px; 
+    text-decoration: none; 
+    margin: 0 15px; 
+    border-radius: 5px; 
+}
+
+.menu-item:hover {
+    background-color: #da70d6; 
+}
+
+.welcome-info,
+.lecture-container {
+    text-align: center; 
+    padding-top: 30px; 
+}
+
+h1, h2 {
+    color: #333; 
+    font-size: 24px;
+}
+
+.lecture-container {
+    text-align: center; 
+    padding-top: 30px;
+}
+
+#addLectureForm {
+    display: grid; 
+    gap: 10px; 
+    max-width: 600px; 
+    margin: 0 auto; 
+    padding: 20px; 
+    background-color: #ffffff; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    border-radius: 5px; 
+}
+
+#addLectureForm input[type="text"],
+#addLectureForm textarea {
+    width: 100%; 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+}
+
+#addLectureForm button {
+    background-color: #007bff; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+
+#addLectureForm button:hover {
+    background-color: #0056b3; 
+}
+</style>

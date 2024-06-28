@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление Тестами</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="image-container">
+    <img src="https://upload.wikimedia.org/wikipedia/ru/0/08/%D0%94%D0%92%D0%A4%D0%A3_%D0%BB%D0%BE%D0%B3%D0%BE.jpg" width="170" height="110">
+</div>
+
+<div class="menu-container">
+    <a href="#" class="menu-item">Главная</a>
+    <a href="#" class="menu-item">Лекции</a>
+    <a href="#" class="menu-item">Практические задания</a>
+    <a href="#" class="menu-item active">Тесты</a>
+    <a href="#" class="menu-item">Контрольные задания</a>
+</div>
+
+<div class="test-container">
+    <h2>Тесты</h2>
+    <p>Выберите тест из списка ниже:</p>
+    <!-- Список тестов -->
+    <ul class="test-list"></ul>
+    
+    <!-- Расширенная форма для добавления нового теста -->
+    <form id="addTestForm">
+        <input type="text" id="newTestTitle" placeholder="Название теста">
+        <textarea id="newTestQuestions" placeholder="Вопросы теста"></textarea>
+        <button type="submit">Добавить тест</button>
+    </form>
+    
+    <!-- Форма для редактирования существующего теста -->
+    <form id="editTestForm" style="display:none;">
+        <input type="hidden" id="testIdToEdit">
+        <input type="text" id="editedTestTitle" placeholder="Измененное название теста">
+        <textarea id="editedTestQuestions" placeholder="Измененные вопросы теста"></textarea>
+        <button type="submit">Сохранить изменения</button>
+    </form>
+    
+    <!-- Форма для удаления теста -->
+    <form id="deleteTestForm" style="display:none;">
+        <input type="hidden" id="testIdToDelete">
+        <button type="submit">Удалить тест</button>
+    </form>
+</div>
+
+<script>
+let tests = [
+    {id: 1, title: "Тест 1", questions: "Вопросы теста 1..."},
+    {id: 2, title: "Тест 2", questions: "Вопросы теста 2..."},
+    {id: 3, title: "Тест 3", questions: "Вопросы теста 3..."},
+    {id: 4, title: "Тест 4", questions: "Вопросы теста 4..."},
+    {id: 5, title: "Тест 5", questions: "Вопросы теста 5..."},
+
+];
+
+function renderTests() {
+    const testList = document.querySelector('.test-list');
+    testList.innerHTML = ''; // Очистка списка
+    tests.forEach(test => {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = test.title;
+        li.appendChild(link);
+        li.addEventListener('click', () => selectTest(test.id));
+        testList.appendChild(li);
+    });
+}
+
+function selectTest(id) {
+    const editForm = document.getElementById('editTestForm');
+    const deleteForm = document.getElementById('deleteTestForm');
+    const testIdToEdit = document.getElementById('testIdToEdit');
+    const testIdToDelete = document.getElementById('testIdToDelete');
+
+    tests.forEach(test => {
+        if (test.id === id) {
+            editForm.style.display = 'block';
+            deleteForm.style.display = 'block';
+            testIdToEdit.value = id;
+            testIdToDelete.value = id;
+            return;
+        }
+    });
+
+    editForm.querySelector('#editedTestTitle').value = tests.find(t => t.id === id).title;
+    editForm.querySelector('#editedTestQuestions').value = tests.find(t => t.id === id).questions;
+}
+
+document.getElementById('addTestForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const newTestTitle = document.getElementById('newTestTitle').value.trim();
+    const newTestQuestions = document.getElementById('newTestQuestions').value.trim();
+    if (newTestTitle && newTestQuestions) {
+        tests.push({id: Date.now(), title: newTestTitle, questions: newTestQuestions});
+        renderTests();
+        document.getElementById('newTestTitle').value = '';
+        document.getElementById('newTestQuestions').value = '';
+    }
+});
+
+document.getElementById('editTestForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const editedTestTitle = document.getElementById('editedTestTitle').value.trim();
+    const editedTestQuestions = document.getElementById('editedTestQuestions').value.trim();
+    const testIdToEdit = document.getElementById('testIdToEdit').value;
+    tests = tests.map(test => test.id === Number(testIdToEdit)? {...test, title: editedTestTitle, questions: editedTestQuestions} : test);
+    renderTests();
+    document.getElementById('editTestForm').style.display = 'none';
+    document.getElementById('deleteTestForm').style.display = 'none';
+});
+
+document.getElementById('deleteTestForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const testIdToDelete = document.getElementById('testIdToDelete').value;
+    tests = tests.filter(test => test.id!== Number(testIdToDelete));
+    renderTests();
+    document.getElementById('editTestForm').style.display = 'none';
+    document.getElementById('deleteTestForm').style.display = 'none';
+});
+
+renderTests();
+</script>
+
+</body>
+</html>
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #e9ebee; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px; 
+}
+
+.menu-container {
+    background-color: #483D8B;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    text-align: center;
+    padding: 10px 0; 
+}
+
+.menu-item {
+    display: inline-block; 
+    background-color: FFB6C1;
+    color: white; 
+    padding: 10px 20px; 
+    text-decoration: none; 
+    margin: 0 15px; 
+    border-radius: 5px; 
+}
+
+.menu-item:hover {
+    background-color: #da70d6; 
+}
+
+.welcome-info,
+.lecture-container {
+    text-align: center; 
+    padding-top: 30px; 
+}
+
+h1, h2 {
+    color: #333; 
+    font-size: 24px;
+}
+
+.test-container {
+    text-align: center; 
+    padding-top: 30px;
+}
+
+#addLectureForm {
+    display: grid; 
+    gap: 10px; 
+    max-width: 600px; 
+    margin: 0 auto; 
+    padding: 20px; 
+    background-color: #ffffff; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    border-radius: 5px; 
+}
+
+#addLectureForm input[type="text"],
+#addLectureForm textarea {
+    width: 100%; 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+}
+
+#addLectureForm button {
+    background-color: #007bff; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+
+#addLectureForm button:hover {
+    background-color: #0056b3; 
+}
+</style>

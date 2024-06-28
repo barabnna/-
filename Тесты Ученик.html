@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тесты</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="image-container">
+    <img src="https://upload.wikimedia.org/wikipedia/ru/0/08/%D0%94%D0%92%D0%A4%D0%A3_%D0%BB%D0%BE%D0%B3%D0%BE.jpg" width="170" height="110">
+</div>
+
+<div class="menu-container">
+    <a href="#" class="menu-item">Главная</a>
+    <a href="#" class="menu-item">Лекции</a>
+    <a href="#" class="menu-item">Практические задания</a>
+    <a href="#" class="menu-item active">Тесты</a>
+    <a href="#" class="menu-item">Контрольные задания</a>
+</div>
+
+<div class="test-container">
+    <h2>Тесты</h2>
+    <p>Выберите тест из списка ниже:</p>
+    <!-- Список тестов -->
+    <ul class="test-list">
+        <li><a href="#">Тест 1</a></li>
+        <li><a href="#">Тест 2</a></li>
+        <li><a href="#">Тест 3</a></li>
+        <li><a href="#">Тест 4</a></li>
+        <li><a href="#">Тест 5</a></li>
+        <li><a href="#">Тест 6</a></li>
+    </ul>
+</div>
+
+</body>
+</html>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #e9ebee; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px; 
+}
+
+.menu-container {
+    background-color: #483D8B;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    text-align: center;
+    padding: 10px 0; 
+}
+
+.menu-item {
+    display: inline-block; 
+    background-color: FFB6C1;
+    color: white; 
+    padding: 10px 20px; 
+    text-decoration: none; 
+    margin: 0 15px; 
+    border-radius: 5px; 
+}
+
+.menu-item:hover {
+    background-color: #da70d6; 
+}
+
+.test-container {
+    text-align: center; 
+    padding-top: 30px; 
+}
+
+h1, h2 {
+    color: #333; 
+    font-size: 24px;
+}
+</style>

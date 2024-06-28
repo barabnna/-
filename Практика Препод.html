@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Практические Задания</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="image-container">
+    <img src="https://upload.wikimedia.org/wikipedia/ru/0/08/%D0%94%D0%92%D0%A4%D0%A3_%D0%BB%D0%BE%D0%B3%D0%BE.jpg" width="170" height="110">
+</div>
+
+<div class="menu-container">
+    <a href="#" class="menu-item">Главная</a>
+    <a href="#" class="menu-item">Лекции</a>
+    <a href="#" class="menu-item active">Практические задания</a>
+    <a href="#" class="menu-item">Тесты</a>
+    <a href="#" class="menu-item">Контрольные задания</a>
+</div>
+
+<div class="tasks-container">
+    <h2>Практические Задания</h2>
+    <p>Выберите задание из списка ниже:</p>
+    <!-- Список заданий -->
+    <ul class="task-list"></ul>
+    
+    <!-- Форма для добавления нового задания -->
+    <form id="addTaskForm">
+        <input type="text" id="newTaskTitle" placeholder="Название задания">
+        <textarea id="newTaskDescription" placeholder="Описание задания"></textarea>
+        <button type="submit">Добавить задание</button>
+    </form>
+    
+    <!-- Форма для редактирования существующего задания -->
+    <form id="editTaskForm" style="display:none;">
+        <input type="hidden" id="taskIdToEdit">
+        <input type="text" id="editedTaskTitle" placeholder="Измененное название задания">
+        <textarea id="editedTaskDescription" placeholder="Измененное описание задания"></textarea>
+        <button type="submit">Сохранить изменения</button>
+    </form>
+    
+    <!-- Форма для удаления задания -->
+    <form id="deleteTaskForm" style="display:none;">
+        <input type="hidden" id="taskIdToDelete">
+        <button type="submit">Удалить задание</button>
+    </form>
+</div>
+
+<script>
+let tasks = [
+    {id: 1, title: "Задание 1", description: "Описание задания 1..."},
+    {id: 2, title: "Задание 2", description: "Описание задания 2..."},
+    {id: 3, title: "Задание 3", description: "Описание задания 3..."},
+    {id: 4, title: "Задание 4", description: "Описание задания 4..."},
+    {id: 5, title: "Задание 5", description: "Описание задания 5..."},
+
+];
+
+function renderTasks() {
+    const taskList = document.querySelector('.task-list');
+    taskList.innerHTML = ''; // Очистка списка
+    tasks.forEach(task => {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = task.title;
+        li.appendChild(link);
+        li.addEventListener('click', () => selectTask(task.id));
+        taskList.appendChild(li);
+    });
+}
+
+function selectTask(id) {
+    const editForm = document.getElementById('editTaskForm');
+    const deleteForm = document.getElementById('deleteTaskForm');
+    const taskIdToEdit = document.getElementById('taskIdToEdit');
+    const taskIdToDelete = document.getElementById('taskIdToDelete');
+
+    tasks.forEach(task => {
+        if (task.id === id) {
+            editForm.style.display = 'block';
+            deleteForm.style.display = 'block';
+            taskIdToEdit.value = id;
+            taskIdToDelete.value = id;
+            return;
+        }
+    });
+
+    editForm.querySelector('#editedTaskTitle').value = tasks.find(t => t.id === id).title;
+    editForm.querySelector('#editedTaskDescription').value = tasks.find(t => t.id === id).description;
+}
+
+document.getElementById('addTaskForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const newTaskTitle = document.getElementById('newTaskTitle').value.trim();
+    const newTaskDescription = document.getElementById('newTaskDescription').value.trim();
+    if (newTaskTitle && newTaskDescription) {
+        tasks.push({id: Date.now(), title: newTaskTitle, description: newTaskDescription});
+        renderTasks();
+        document.getElementById('newTaskTitle').value = '';
+        document.getElementById('newTaskDescription').value = '';
+    }
+});
+
+document.getElementById('editTaskForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const editedTaskTitle = document.getElementById('editedTaskTitle').value.trim();
+    const editedTaskDescription = document.getElementById('editedTaskDescription').value.trim();
+    const taskIdToEdit = document.getElementById('taskIdToEdit').value;
+    tasks = tasks.map(task => task.id === Number(taskIdToEdit)? {...task, title: editedTaskTitle, description: editedTaskDescription} : task);
+    renderTasks();
+    document.getElementById('editTaskForm').style.display = 'none';
+    document.getElementById('deleteTaskForm').style.display = 'none';
+});
+
+document.getElementById('deleteTaskForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const taskIdToDelete = document.getElementById('taskIdToDelete').value;
+    tasks = tasks.filter(task => task.id!== Number(taskIdToDelete));
+    renderTasks();
+    document.getElementById('editTaskForm').style.display = 'none';
+    document.getElementById('deleteTaskForm').style.display = 'none';
+});
+
+renderTasks();
+
+
+
+
+</script>
+
+</body>
+</html>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #e9ebee; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px; 
+}
+
+.menu-container {
+    background-color: #483D8B;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    text-align: center;
+    padding: 10px 0; 
+}
+
+.menu-item {
+    display: inline-block; 
+    background-color: FFB6C1;
+    color: white; 
+    padding: 10px 20px; 
+    text-decoration: none; 
+    margin: 0 15px; 
+    border-radius: 5px; 
+}
+
+.menu-item:hover {
+    background-color: #da70d6; 
+}
+
+.welcome-info,
+.lecture-container {
+    text-align: center; 
+    padding-top: 30px; 
+}
+
+h1, h2 {
+    color: #333; 
+    font-size: 24px;
+}
+
+.tasks-container {
+    text-align: center; 
+    padding-top: 30px;
+}
+
+#addLectureForm {
+    display: grid; 
+    gap: 10px; 
+    max-width: 600px; 
+    margin: 0 auto; 
+    padding: 20px; 
+    background-color: #ffffff; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    border-radius: 5px; 
+}
+
+#addLectureForm input[type="text"],
+#addLectureForm textarea {
+    width: 100%; 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+}
+
+#addLectureForm button {
+    background-color: #007bff; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+
+#addLectureForm button:hover {
+    background-color: #0056b3; 
+}
+</style>

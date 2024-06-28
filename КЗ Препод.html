@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление Контрольными Заданиями</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="image-container">
+    <img src="https://upload.wikimedia.org/wikipedia/ru/0/08/%D0%94%D0%92%D0%A4%D0%A3_%D0%BB%D0%BE%D0%B3%D0%BE.jpg" width="170" height="110">
+</div>
+
+<div class="menu-container">
+    <a href="#" class="menu-item">Главная</a>
+    <a href="#" class="menu-item">Лекции</a>
+    <a href="#" class="menu-item">Практические задания</a>
+    <a href="#" class="menu-item">Тесты</a>
+    <a href="#" class="menu-item active">Контрольные задания</a>
+</div>
+
+<div class="assignment-container">
+    <h2>Контрольные Задания</h2>
+    <p>Выберите контрольное задание из списка ниже:</p>
+    <!-- Список контрольных заданий -->
+    <ul class="assignment-list"></ul>
+    
+    <!-- Расширенная форма для добавления нового контрольного задания -->
+    <form id="addAssignmentForm">
+        <input type="text" id="newAssignmentTitle" placeholder="Название задания">
+        <textarea id="newAssignmentDetails" placeholder="Детали задания"></textarea>
+        <button type="submit">Добавить задание</button>
+    </form>
+    
+    <!-- Форма для редактирования существующего контрольного задания -->
+    <form id="editAssignmentForm" style="display:none;">
+        <input type="hidden" id="assignmentIdToEdit">
+        <input type="text" id="editedAssignmentTitle" placeholder="Измененное название задания">
+        <textarea id="editedAssignmentDetails" placeholder="Измененные детали задания"></textarea>
+        <button type="submit">Сохранить изменения</button>
+    </form>
+    
+    <!-- Форма для удаления контрольного задания -->
+    <form id="deleteAssignmentForm" style="display:none;">
+        <input type="hidden" id="assignmentIdToDelete">
+        <button type="submit">Удалить задание</button>
+    </form>
+</div>
+
+<script>
+let assignments = [
+    {id: 1, title: "Задание 1", details: "Детали задания 1..."},
+    {id: 2, title: "Задание 2", details: "Детали задания 2..."},
+    {id: 3, title: "Задание 3", details: "Детали задания 3..."},
+    {id: 4, title: "Задание 4", details: "Детали задания 4..."},
+    {id: 5, title: "Задание 5", details: "Детали задания 5..."},
+];
+
+function renderAssignments() {
+    const assignmentList = document.querySelector('.assignment-list');
+    assignmentList.innerHTML = ''; // Очистка списка
+    assignments.forEach(assignment => {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = assignment.title;
+        li.appendChild(link);
+        li.addEventListener('click', () => selectAssignment(assignment.id));
+        assignmentList.appendChild(li);
+    });
+}
+
+function selectAssignment(id) {
+    const editForm = document.getElementById('editAssignmentForm');
+    const deleteForm = document.getElementById('deleteAssignmentForm');
+    const assignmentIdToEdit = document.getElementById('assignmentIdToEdit');
+    const assignmentIdToDelete = document.getElementById('assignmentIdToDelete');
+
+    assignments.forEach(assignment => {
+        if (assignment.id === id) {
+            editForm.style.display = 'block';
+            deleteForm.style.display = 'block';
+            assignmentIdToEdit.value = id;
+            assignmentIdToDelete.value = id;
+            return;
+        }
+    });
+
+    editForm.querySelector('#editedAssignmentTitle').value = assignments.find(a => a.id === id).title;
+    editForm.querySelector('#editedAssignmentDetails').value = assignments.find(a => a.id === id).details;
+}
+
+document.getElementById('addAssignmentForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const newAssignmentTitle = document.getElementById('newAssignmentTitle').value.trim();
+    const newAssignmentDetails = document.getElementById('newAssignmentDetails').value.trim();
+    if (newAssignmentTitle && newAssignmentDetails) {
+        assignments.push({id: Date.now(), title: newAssignmentTitle, details: newAssignmentDetails});
+        renderAssignments();
+        document.getElementById('newAssignmentTitle').value = '';
+        document.getElementById('newAssignmentDetails').value = '';
+    }
+});
+
+document.getElementById('editAssignmentForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const editedAssignmentTitle = document.getElementById('editedAssignmentTitle').value.trim();
+    const editedAssignmentDetails = document.getElementById('editedAssignmentDetails').value.trim();
+    const assignmentIdToEdit = document.getElementById('assignmentIdToEdit').value;
+    assignments = assignments.map(assignment => assignment.id === Number(assignmentIdToEdit)? {...assignment, title: editedAssignmentTitle, details: editedAssignmentDetails} : assignment);
+    renderAssignments();
+    document.getElementById('editAssignmentForm').style.display = 'none';
+    document.getElementById('deleteAssignmentForm').style.display = 'none';
+});
+
+document.getElementById('deleteAssignmentForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const assignmentIdToDelete = document.getElementById('assignmentIdToDelete').value;
+    assignments = assignments.filter(assignment => assignment.id!== Number(assignmentIdToDelete));
+    renderAssignments();
+    document.getElementById('editAssignmentForm').style.display = 'none';
+    document.getElementById('deleteAssignmentForm').style.display = 'none';
+});
+
+renderAssignments();
+</script>
+
+</body>
+</html>
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #e9ebee; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px; 
+}
+
+.menu-container {
+    background-color: #483D8B;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    text-align: center;
+    padding: 10px 0; 
+}
+
+.menu-item {
+    display: inline-block; 
+    background-color: FFB6C1;
+    color: white; 
+    padding: 10px 20px; 
+    text-decoration: none; 
+    margin: 0 15px; 
+    border-radius: 5px; 
+}
+
+.menu-item:hover {
+    background-color: #da70d6; 
+}
+
+.welcome-info,
+.lecture-container {
+    text-align: center; 
+    padding-top: 30px; 
+}
+
+h1, h2 {
+    color: #333; 
+    font-size: 24px;
+}
+
+.assignment-container {
+    text-align: center; 
+    padding-top: 30px;
+}
+
+#addLectureForm {
+    display: grid; 
+    gap: 10px; 
+    max-width: 600px; 
+    margin: 0 auto; 
+    padding: 20px; 
+    background-color: #ffffff; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    border-radius: 5px; 
+}
+
+#addLectureForm input[type="text"],
+#addLectureForm textarea {
+    width: 100%; 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+}
+
+#addLectureForm button {
+    background-color: #007bff; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+
+#addLectureForm button:hover {
+    background-color: #0056b3; 
+}
+</style>
